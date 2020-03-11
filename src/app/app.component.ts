@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
+import { CompoundExercisesService } from './compound-exercises.service' 
 
-// <app-exercise *ngFor="let rootExercise of exercises"></app-exercise>
 @Component({
   selector: 'app-root',
   // headerMessage is a string interpolation example
@@ -10,11 +10,14 @@ import { Component } from '@angular/core';
       <p [style]="deadliftColored">Deadlift with color (example of property binding)</p>
       <app-nested-component (nestedComponentMessageEmmited)="onButtonClicked($event)"></app-nested-component>
       <p>{{ buttonMessage }}</p>
-      <p>the following component receives data from a root component</p>
+      <p>the following child component receives data from the root component (e.g. @Input decorator is used)</p>
+      <p>Moreover, the exercises are retrieved via a service (CompoundExercisesService)</p>
       <app-exercise *ngFor="let outerExercise of exercises" [innerExercise]="outerExercise"></app-exercise>
     </div>
     `,
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  // providers must be implemented in order DI works
+  providers: [CompoundExercisesService]
 })
 export class AppComponent {
   title: string = 'components-and-databinding';
@@ -24,10 +27,13 @@ export class AppComponent {
   public headerMessage: string;
   // this property is binded to html through property interpolation
   public deadliftColored: string = "background-color:DodgerBlue;";
+  //this array is provided as an input to a subcomponent
+  public exercises: Array<string>;
 
-  public exercises: Array<string> = ["deadlift", "squat", "military presses"];
+  constructor(private compoundExerciseService: CompoundExercisesService) {
+    //compoundExerciseService is a dependency injenction example
+    this.exercises = compoundExerciseService.getCompoundExercises();
 
-  constructor() {
     this.headerMessage = "Crossfit with angular";
     this.deadliftColored = "background-color:DodgerBlue;";
   }
